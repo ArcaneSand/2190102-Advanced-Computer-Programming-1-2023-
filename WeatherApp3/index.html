@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App - Easy Tutorial</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+
+<div class = "particles-container">
+        <div class="particles">
+            <span style="--i:11;"></span>
+            <span style="--i:12;"></span>
+            <span style="--i:24;"></span>
+            <span style="--i:10;"></span>
+            <span style="--i:14;"></span>
+            <span style="--i:23;"></span>
+            <span style="--i:18;"></span>
+            <span style="--i:16;"></span>
+            <span style="--i:19;"></span>
+            <span style="--i:20;"></span>
+            <span style="--i:22;"></span>
+            <span style="--i:25;"></span>
+            <span style="--i:18;"></span>
+            <span style="--i:21;"></span>
+            <span style="--i:13;"></span>
+            <span style="--i:15;"></span>
+            <span style="--i:26;"></span>
+            <span style="--i:17;"></span>
+            <span style="--i:13;"></span>
+            <span style="--i:28;"></span>
+            <span style="--i:21;"></span>
+            <span style="--i:15;"></span>
+            <span style="--i:22;"></span>
+            <span style="--i:27;"></span>
+            <span style="--i:19;"></span>
+    
+            <span style="--i:11;"></span>
+            <span style="--i:12;"></span>
+            <span style="--i:24;"></span>
+            <span style="--i:10;"></span>
+            <span style="--i:14;"></span>
+            <span style="--i:23;"></span>
+            <span style="--i:18;"></span>
+            <span style="--i:16;"></span>
+            <span style="--i:19;"></span>
+            <span style="--i:20;"></span>
+            <span style="--i:22;"></span>
+            <span style="--i:25;"></span>
+            <span style="--i:18;"></span>
+            <span style="--i:21;"></span>
+            <span style="--i:13;"></span>
+            <span style="--i:15;"></span>
+            <span style="--i:26;"></span>
+            <span style="--i:17;"></span>
+            <span style="--i:13;"></span>
+            <span style="--i:28;"></span>
+            <span style="--i:21;"></span>
+            <span style="--i:15;"></span>
+            <span style="--i:22;"></span>
+            <span style="--i:27;"></span>
+            <span style="--i:19;"></span>
+        </div>
+
+</div>
+
+
+<div class="card">
+    <div class="search">
+        <input type="text" placeholder="enter the city name" spellcheck="false" oninput="handleInput()" onkeydown="handleKeyDown()">
+        <button onclick="checkWeather(searchBox.value)"><img src="images/search.png"></button>
+    </div>
+    <div class="error">
+        <p>Invalid city name</p>
+    </div>
+    <div class="weather">
+        <img src="images/rain.png" class="weather-icon"></img>
+        <h1 class="temp">22°C</h1>
+        <h2 class="city">New York</h2>
+        <div class="details">
+            <div class="col">
+                <img src="images/humidity.png">
+                <div>
+                    <p class="humidity">50%</p>
+                    <p>Humidity</p>
+                </div>
+            </div>
+            <div class="col">
+                <img src="images/wind.png">
+                <div>
+                    <p class="wind">15 km/h</p>
+                    <p>Wind Speed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slider-container">
+        <label for="unitSlider">Celsius</label>
+        <input type="checkbox" id="unitSlider" style="display: none;" onclick="toggleUnits()">
+        <label class="toggle" for="unitSlider"></label>
+        <label for="unitSlider">Fahrenheit</label>
+    </div>
+    
+</div>
+
+
+
+<script>
+
+const apiKey = "653127873f92c7c30a48bc73b6b7d197";
+const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=";
+let units = "metric"; // Default to Celsius
+
+const searchBox = document.querySelector(".search input");
+const weatherIcon = document.querySelector(".weather-icon");
+const tempElement = document.querySelector(".temp");
+const unitSlider = document.getElementById("unitSlider");
+
+function handleInput() {
+    const inputValue = searchBox.value.trim();
+    if (inputValue === '') {
+        hideWeatherData();
+    }
+}
+
+function handleKeyDown() {
+    if (event.key === 'Enter') {
+        checkWeather(searchBox.value);
+    }
+}
+
+async function checkWeather(city) {
+    const response = await fetch(apiUrl + units + `&q=${city}&appid=${apiKey}`);
+
+    if (response.status == 404) {
+        showErrorMessage();
+    } else {
+        const data = await response.json();
+        showWeatherData(data);
+    }
+}
+
+function showErrorMessage() {
+    document.querySelector(".error").style.display = "block";
+    document.querySelector(".weather").style.display = "none";
+}
+
+function showWeatherData(data) {
+    document.querySelector(".city").innerHTML = data.name;
+    tempElement.innerHTML = Math.round(data.main.temp) + getTempUnitSymbol();
+    document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+    document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+
+    setWeatherIcon(data.weather[0].main);
+
+    document.querySelector(".weather").style.display = "block";
+    document.querySelector(".error").style.display = "none";
+}
+
+function setWeatherIcon(weatherMain) {
+    const weatherIconSrc = getWeatherIconSrc(weatherMain);
+    weatherIcon.src = weatherIconSrc;
+}
+
+function getWeatherIconSrc(weatherMain) {
+    switch (weatherMain) {
+        case "Clouds":
+            return "images/clouds.png";
+        case "Clear":
+            return "images/clear.png";
+        case "Rain":
+            return "images/rain.png";
+        case "Drizzle":
+            return "images/drizzle.png";
+        case "Mist":
+            return "images/mist.png";
+        case "Snow":
+            return "images/snow.png";
+        default:
+            return "images/unknown.png";
+    }
+}
+
+function hideWeatherData() {
+    document.querySelector(".weather").style.display = "none";
+    document.querySelector(".error").style.display = "none";
+}
+
+function toggleUnits() {
+    // Get the current temperature and its unit
+    const currentTempElement = tempElement.innerHTML;
+    const currentTemp = Number(currentTempElement.split('°')[0]);
+
+    // Toggle the units
+    units = units === "metric" ? "imperial" : "metric";
+
+    // Convert the temperature based on the new units
+    const convertedTemp = units === "imperial" ? celsiusToFahrenheit(currentTemp) : fahrenheitToCelsius(currentTemp);
+
+    // Update the temperature display immediately
+    tempElement.innerHTML = Math.round(convertedTemp) + getTempUnitSymbol();
+}
+
+// Function to convert Celsius to Fahrenheit
+function celsiusToFahrenheit(celsius) {
+    return (celsius * 9/5) + 32;
+}
+
+// Function to convert Fahrenheit to Celsius
+function fahrenheitToCelsius(fahrenheit) {
+    return (fahrenheit - 32) * 5/9;
+}
+
+function getTempUnitSymbol() {
+    return units === "imperial" ? "°F" : "°C";
+}
+
+</script>
+</body>
+</html>
